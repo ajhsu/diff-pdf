@@ -173,14 +173,21 @@ cairo_surface_t *diff_images(cairo_surface_t *s1, cairo_surface_t *s2,
                 unsigned char cg2 = *(data2 + x + 1);
                 unsigned char cb2 = *(data2 + x + 2);
 
-                if ( cr1 != cr2 || cg1 != cg2 || cb1 != cb2 )
-                {
-                    changes = true;
-                }
-
                 // change the B channel to be from s2; RG will be s1
                 *(out + x + 2) = cb2;
 
+                if ( cr1 != cr2 || cg1 != cg2 || cb1 != cb2 )
+                {
+                    changes = true;   
+                }
+                else
+                {
+                    // Remain only specific opacity when the pixel is identical.
+                    double opacity = 0.025;
+                    *(out + x + 0) = *(out + x + 0) * opacity + 255 * (1 - opacity);
+                    *(out + x + 1) = *(out + x + 1) * opacity + 255 * (1 - opacity);
+                    *(out + x + 2) = *(out + x + 2) * opacity + 255 * (1 - opacity);
+                }
             }
         }
     }
